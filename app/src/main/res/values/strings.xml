@@ -1,4 +1,10 @@
 <resources>
     <string name="app_name">Easy and Fast Notes - No Ads</string>
     <string name="short_name">Notes</string>
+    <string name="enter_note">Enter note</string>
+    <string name="add_sample_data">Add Sample Data</string>
+    <string name="delete">Delete</string>
+    <string name="delete_all_notes">Delete All Notes</string>
+    <string name="add">Add</string>
+    <string name="note">note</string>
 </resources>

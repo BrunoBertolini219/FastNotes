@@ -1,15 +1,45 @@
 package br.com.brunoccbertolini.easyandfastnotes_noads
 
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
+import br.com.brunoccbertolini.easyandfastnotes_noads.data.AppDateBase
 import br.com.brunoccbertolini.easyandfastnotes_noads.data.NoteEntity
 import br.com.brunoccbertolini.easyandfastnotes_noads.data.SampleDataProvider
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class MainViewModel : ViewModel() {
-    val notesList = MutableLiveData<List<NoteEntity>>()
+class MainViewModel(app: Application) : AndroidViewModel(app) {
 
-    init {
-        notesList.value = SampleDataProvider.getNotes()
+    private val database = AppDateBase.getInstance(app)
+    val notesList = database?.noteDao()?.getAll()
+
+    fun addSampleData(){
+        viewModelScope.launch {
+            withContext(Dispatchers.IO){
+                val sampleNotes = SampleDataProvider.getNotes()
+                database?.noteDao()?.insertAll(sampleNotes)
+            }
+        }
+
     }
+
+    fun deleteNotes(selectedNotes: List<NoteEntity>) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO){
+                database?.noteDao()?.deleteNotes(selectedNotes)
+            }
+        }
+    }
+
+    fun deleteAllNotes() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO){
+                database?.noteDao()?.deleteAll()
+            }
+        }
+    }
+
 
 }

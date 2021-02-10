@@ -8,9 +8,11 @@ import br.com.brunoccbertolini.easyandfastnotes_noads.R
 import br.com.brunoccbertolini.easyandfastnotes_noads.data.NoteEntity
 import br.com.brunoccbertolini.easyandfastnotes_noads.databinding.RvItemBinding
 
-class NoteListAdapter(private val notesList: List<NoteEntity>): RecyclerView.Adapter<NoteListAdapter.NoteListViewHolder>() {
+class NoteListAdapter(private val notesList: List<NoteEntity>,
+private val listener:ListItemListener):
+    RecyclerView.Adapter<NoteListAdapter.NoteListViewHolder>() {
 
-
+    val selectedNotes = arrayListOf<NoteEntity>()
 
    inner class NoteListViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
        val binding = RvItemBinding.bind(itemView)
@@ -25,10 +27,37 @@ class NoteListAdapter(private val notesList: List<NoteEntity>): RecyclerView.Ada
     override fun onBindViewHolder(holder: NoteListViewHolder, position: Int) {
         val note = notesList[position]
         holder.binding.apply {
-            tvTextNote.text = note.text
+            tvNote.text = note.text
+            root.setOnClickListener {
+                listener.editNote(note.id)
+            }
+            fabNote.setOnClickListener {
+                if (selectedNotes.contains(note)){
+                    selectedNotes.remove(note)
+                    fabNote.setImageResource(R.drawable.ic_notes)
+                }else{
+                    selectedNotes.add(note)
+                    fabNote.setImageResource(R.drawable.ic_check)
+                }
+                listener.onItemSelectionChanged()
+            }
+            fabNote.setImageResource(
+                if (selectedNotes.contains(note)){
+                    R.drawable.ic_check
+                }else{
+                    R.drawable.ic_notes
+                }
+            )
         }
     }
 
     override fun getItemCount() = notesList.size
 
+
+    interface ListItemListener {
+        fun editNote(noteId:Int)
+        fun onItemSelectionChanged()
+    }
+
 }
+
